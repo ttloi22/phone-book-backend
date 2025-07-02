@@ -15,13 +15,20 @@ mongoose
   })
 
 const phoneSchema = mongoose.Schema({
-  name: String,
-  number: String,
+  name: { type: String, required: true, minLength: 3, unique: true },
+  number: {
+    type: String, validate: {
+      validator: (v) => {
+        return /^\d{2,3}-\d+$/.test(v) && v.length > 8
+      },
+      message: 'Phone number must be in the format 123-4567890 or 12-34567890'
+    }
+  },
 })
 
 const Phone = mongoose.model('Phone', phoneSchema)
 
-phoneSchema.set('toJSON', {
+phoneSchema.set('toJSON', { 
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
     delete returnedObject._id

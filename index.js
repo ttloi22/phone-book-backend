@@ -52,17 +52,7 @@ app.delete('/api/persons/:id', (req, res, next) => {
 
 app.post('/api/persons', async (req, res, next) => {
   const { name, number } = req.body
-  if (!name || !number) {
-    return res.status(400).json({ error: 'name and number are required' })
-  }
-
   try {
-    // Check if person already exists
-    const existingPerson = await Person.findOne({ name: name })
-    if (existingPerson) {
-      return res.status(400).json({ error: 'name must be unique' })
-    }
-
     const person = new Person({
       name,
       number,
@@ -76,10 +66,6 @@ app.post('/api/persons', async (req, res, next) => {
 
 app.put('/api/persons/:id', async (req, res, next) => {
   const { name, number } = req.body
-  if (!name || !number) {
-    return res.status(400).json({ error: 'name and number are required' })
-  }
-
   try {
     const updatedPerson = await Person.findByIdAndUpdate(
       req.params.id,
@@ -99,7 +85,6 @@ app.put('/api/persons/:id', async (req, res, next) => {
 
 const errorHandler = (err, req, res, next) => {
   console.error(err.message)
-
   if (err.name === 'CastError') {
     return res.status(400).send({ error: 'malformatted id' })
   } else if (err.name === 'ValidationError') {
